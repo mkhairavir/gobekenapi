@@ -12,6 +12,25 @@ type Event struct {
 	Status      string
 }
 
+type Detail struct {
+	Id       int
+	Id_event int
+	Donatur  string
+	Dana     float64
+	Metode   string
+	Tgl      string
+}
+
+func CreateDetail(metode, tgl, donatur string, id_event int, dana float64) (*Detail, error) {
+	return &Detail{
+		Id_event: id_event,
+		Donatur:  donatur,
+		Dana:     dana,
+		Metode:   metode,
+		Tgl:      tgl,
+	}, nil
+}
+
 func CreateEvent(img, name, eventType, tanggal, expire, status string, id_user int, totalDonasi float64) (*Event, error) {
 	return &Event{
 		// id:          id,
