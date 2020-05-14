@@ -3,15 +3,19 @@ package main
 import (
 	// "fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/mkhairavir/gobekenapi/model"
 )
 
 func app(e *echo.Echo, store model.EventStore) {
+
 	// untuk tampil event
 	e.GET("/events", func(c echo.Context) error {
 		// Process
@@ -42,14 +46,15 @@ func app(e *echo.Echo, store model.EventStore) {
 	})
 
 	// untuk tampil event buatan user
-	e.GET("/user/events/", func(c echo.Context) error {
+	e.GET("/user/:id", func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		details := store.AllDet(id)
-		return c.JSON(http.StatusOK, details)
+		events := store.UserEvent(id)
+		return c.JSON(http.StatusOK, events)
 	})
 
-	e.GET("/history", func(c echo.Context) error {
+	//untuk tampil history
+	e.GET("/histories", func(c echo.Context) error {
 		history := store.History()
 
 		return c.JSON(http.StatusOK, history)
@@ -63,14 +68,15 @@ func app(e *echo.Echo, store model.EventStore) {
 
 		img := c.FormValue("img")
 		name := c.FormValue("name")
-		eventType := c.FormValue("eventType")
+		deskripsi := c.FormValue("deskripsi")
+		eventType := c.FormValue("event_type")
 		status := c.FormValue("status")
 		idUser, _ := strconv.Atoi(c.FormValue("id_user"))
-		totalDonasi, _ := strconv.ParseFloat(c.FormValue("totaldonasi"), 64)
+		totalDonasi, _ := strconv.ParseFloat(c.FormValue("total_donasi"), 64)
 		tanggal := tanggalan.Format(layoutISO)
 		expire := tanggalan.AddDate(0, 1, 0).Format(layoutISO)
 
-		event, _ := model.CreateEvent(img, name, eventType, tanggal, expire, status, idUser, totalDonasi)
+		event, _ := model.CreateEvent(img, name, deskripsi, eventType, tanggal, expire, status, idUser, totalDonasi)
 
 		store.Save(event)
 
@@ -78,7 +84,7 @@ func app(e *echo.Echo, store model.EventStore) {
 	})
 
 	// untuk pos donasi
-	e.POST("/user/eventdet", func(c echo.Context) error {
+	e.POST("/donasi", func(c echo.Context) error {
 		layoutISO := "2006-01-02"
 		tanggalan := time.Now()
 
@@ -102,7 +108,8 @@ func app(e *echo.Echo, store model.EventStore) {
 
 		event := store.Find(id)
 		event.Img = c.FormValue("img")
-		event.Name = c.FormValue("name")
+		event.JudulEvent = c.FormValue("name")
+		event.DeskripsiEvent = c.FormValue("deskripsi")
 		event.EventType = c.FormValue("event_type")
 
 		store.Update(event)
@@ -113,14 +120,17 @@ func app(e *echo.Echo, store model.EventStore) {
 }
 
 func main() {
+
+	godotenv.Load()
 	// init data store
 	store := model.NewMainEvent()
 
 	// Create new instance echo framework
 	e := echo.New()
-
+	e.Use(middleware.CORS())
 	// our apps
 	app(e, store)
 
-	e.Logger.Fatal(e.Start(":8880"))
+	// e.Logger.Fatal(e.Start(":8880"))
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }

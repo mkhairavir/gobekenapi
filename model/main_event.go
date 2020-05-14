@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"log"
+	"os"
 	// "fmt"
 )
 
@@ -11,8 +12,9 @@ type MainEventStore struct {
 }
 
 func NewMainEvent() EventStore {
-	// dsn := os.Getenv("DATABASE_USER") + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
-	dsn := "sql3339915:QIU6tupy3K@tcp(sql3.freemysqlhosting.net)/sql3339915?parseTime=true&clientFoundRows=true"
+	dsn := os.Getenv("DATABASE_USER") + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
+	// dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
+	// dsn := "sql3339915:QIU6tupy3K@tcp(sql3.freemysqlhosting.net)/sql3339915?parseTime=true&clientFoundRows=true"
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -34,7 +36,7 @@ func (store *MainEventStore) All() []Event {
 	event := Event{}
 	// event.name = "hallo"
 	for rows.Next() {
-		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.Name, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TotalDonasi, &event.Status)
+		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.JudulEvent, &event.DeskripsiEvent, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TotalDonasi, &event.Status)
 		events = append(events, event)
 	}
 
@@ -92,18 +94,37 @@ func (store *MainEventStore) SaveDet(detail *Detail) error {
 
 }
 
+func (store *MainEventStore) UserEvent(id int) []Event {
+	events := []Event{}
+	rows, err := store.DB.Query(`SELECT * FROM main_event WHERE id_user = ?`, id)
+
+	if err != nil {
+		return events
+	}
+
+	event := Event{}
+	for rows.Next() {
+		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.JudulEvent, &event.DeskripsiEvent, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TotalDonasi, &event.Status)
+		events = append(events, event)
+	}
+
+	return events
+}
+
 func (store *MainEventStore) Save(event *Event) error {
 	// tahun, bulan, hari := time.Now().Date()
 	// tanggal := strconv.Itoa(tahun) + "-" + bulan.String() + "-" + strconv.Itoa(hari)
 
 	result, err := store.DB.Exec(`
-		INSERT INTO main_event(img, name, event_type, id_user, total_donasi,tgl, status) VALUES(?,?,?,?,?,?,?)`,
+		INSERT INTO main_event(img, judul_event, deskripsi_event, event_type, id_user, total_donasi,tgl, expire, status) VALUES(?,?,?,?,?,?,?,?,?)`,
 		event.Img,
-		event.Name,
+		event.JudulEvent,
+		event.DeskripsiEvent,
 		event.EventType,
 		event.Id_user,
 		event.TotalDonasi,
 		event.TanggalAwal,
+		event.Expire,
 		event.Status,
 	)
 	if err != nil {
@@ -135,7 +156,8 @@ func (store *MainEventStore) Find(id int) *Event {
 			&event.Id,
 			&event.Id_user,
 			&event.Img,
-			&event.Name,
+			&event.JudulEvent,
+			&event.DeskripsiEvent,
 			&event.EventType,
 			&event.TotalDonasi,
 			&event.TanggalAwal,
@@ -153,9 +175,10 @@ func (store *MainEventStore) Find(id int) *Event {
 
 func (store *MainEventStore) Update(event *Event) error {
 	result, err := store.DB.Exec(`
-		UPDATE articles SET img = ?, name = ?, event_type = ? WHERE id = ?`,
+		UPDATE articles SET img = ?, judul_event = ?, deskripsi_event= ?, event_type = ? WHERE id = ?`,
 		event.Img,
-		event.Name,
+		event.JudulEvent,
+		event.DeskripsiEvent,
 		event.EventType,
 		event.Id,
 	)
@@ -182,8 +205,15 @@ func (store *MainEventStore) History() []Event {
 
 	history := Event{}
 	for rows.Next() {
-		rows.Scan(&history.Id, &history.Id_user, &history.Img, &history.Name, &history.EventType, &history.TanggalAwal, &history.Expire, &history.TotalDonasi, &history.Status)
+		rows.Scan(&history.Id, &history.Id_user, &history.Img, &history.JudulEvent, &history.DeskripsiEvent, &history.EventType, &history.TanggalAwal, &history.Expire, &history.TotalDonasi, &history.Status)
+		// layoutISO := "2006-01-02"
+		// fmt.Println(history.TanggalAwal)
+		// t, _ := time.Parse(layoutISO, history.TanggalAwal)
+		// fmt.Println(t)
+		// history.TanggalAwal = t.Format(layoutISO)
+
 		histories = append(histories, history)
+
 	}
 	return histories
 }

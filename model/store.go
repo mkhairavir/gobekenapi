@@ -16,6 +16,7 @@ type EventStore interface {
 	SaveDet(*Detail) error
 	AllDet(id int) []Detail
 	History() []Event
+	UserEvent(id int) []Event
 	// ShowDet() []Detail
 	// Delete(article *Event) error
 }
