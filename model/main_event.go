@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"log"
+	"os"
 	// "fmt"
 )
 
@@ -11,8 +12,8 @@ type MainEventStore struct {
 }
 
 func NewMainEvent() EventStore {
-	// dsn := os.Getenv("DATABASE_USER") /* + os.Getenv("DATABASE_PASSWORD") */ + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
-	dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
+	dsn := os.Getenv("DATABASE_USER") + os.Getenv("DATABASE_PASSWORD") + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
+	// dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
 	// dsn := "sql3339915:QIU6tupy3K@tcp(sql3.freemysqlhosting.net)/sql3339915?parseTime=true&clientFoundRows=true"
 
 	db, err := sql.Open("mysql", dsn)
