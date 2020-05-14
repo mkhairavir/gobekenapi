@@ -102,11 +102,13 @@ func app(e *echo.Echo, store model.EventStore) {
 	})
 
 	// untuk edit event berdasar id
-	e.PUT("/events/:id", func(c echo.Context) error {
+	e.PUT("/user/:id_user/event/:id", func(c echo.Context) error {
+		// e.PUT("/events/:id", func(c echo.Context) error {
 
 		id, _ := strconv.Atoi(c.Param("id"))
+		id_user, _ := strconv.Atoi(c.Param("id_user"))
 
-		event := store.Find(id)
+		event := store.FindEvent(id, id_user)
 		event.Img = c.FormValue("img")
 		event.JudulEvent = c.FormValue("name")
 		event.DeskripsiEvent = c.FormValue("deskripsi")

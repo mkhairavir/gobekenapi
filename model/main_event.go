@@ -3,7 +3,6 @@ package model
 import (
 	"database/sql"
 	"log"
-	"os"
 	// "fmt"
 )
 
@@ -12,8 +11,8 @@ type MainEventStore struct {
 }
 
 func NewMainEvent() EventStore {
-	dsn := os.Getenv("DATABASE_USER") + os.Getenv("DATABASE_PASSWORD") + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
-	// dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
+	// dsn := os.Getenv("DATABASE_USER") /* + os.Getenv("DATABASE_PASSWORD") */ + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
+	dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
 	// dsn := "sql3339915:QIU6tupy3K@tcp(sql3.freemysqlhosting.net)/sql3339915?parseTime=true&clientFoundRows=true"
 
 	db, err := sql.Open("mysql", dsn)
@@ -151,7 +150,7 @@ func (store *MainEventStore) Find(id int) *Event {
 	event := Event{}
 
 	err := store.DB.
-		QueryRow(`SELECT * FROM articles WHERE id=?`, id).
+		QueryRow(`SELECT * FROM main_event WHERE id_user=?`, id).
 		Scan(
 			&event.Id,
 			&event.Id_user,
@@ -159,9 +158,35 @@ func (store *MainEventStore) Find(id int) *Event {
 			&event.JudulEvent,
 			&event.DeskripsiEvent,
 			&event.EventType,
-			&event.TotalDonasi,
 			&event.TanggalAwal,
 			&event.Expire,
+			&event.TotalDonasi,
+			&event.Status,
+		)
+
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	return &event
+}
+
+func (store *MainEventStore) FindEvent(id, id_user int) *Event {
+	event := Event{}
+
+	err := store.DB.
+		QueryRow(`SELECT * FROM main_event WHERE id_user=? and id=?`, id_user, id).
+		Scan(
+			&event.Id,
+			&event.Id_user,
+			&event.Img,
+			&event.JudulEvent,
+			&event.DeskripsiEvent,
+			&event.EventType,
+			&event.TanggalAwal,
+			&event.Expire,
+			&event.TotalDonasi,
 			&event.Status,
 		)
 
@@ -175,12 +200,13 @@ func (store *MainEventStore) Find(id int) *Event {
 
 func (store *MainEventStore) Update(event *Event) error {
 	result, err := store.DB.Exec(`
-		UPDATE articles SET img = ?, judul_event = ?, deskripsi_event= ?, event_type = ? WHERE id = ?`,
+		UPDATE main_event SET img = ?, judul_event = ?, deskripsi_event= ?, event_type = ? WHERE id = ? and id_user = ?`,
 		event.Img,
 		event.JudulEvent,
 		event.DeskripsiEvent,
 		event.EventType,
 		event.Id,
+		event.Id_user,
 	)
 	if err != nil {
 		return err
