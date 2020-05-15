@@ -18,6 +18,7 @@ type EventStore interface {
 	AllDet(id int) []Detail
 	History() []Event
 	UserEvent(id int) []Event
+	// SingleEvent(id int) *Event
 	// ShowDet() []Detail
 	// Delete(article *Event) error
 }

@@ -151,7 +151,7 @@ func (store *MainEventStore) Find(id int) *Event {
 	event := Event{}
 
 	err := store.DB.
-		QueryRow(`SELECT * FROM main_event WHERE id_user=?`, id).
+		QueryRow(`SELECT * FROM main_event WHERE id=?`, id).
 		Scan(
 			&event.Id,
 			&event.Id_user,

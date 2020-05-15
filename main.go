@@ -26,7 +26,7 @@ func app(e *echo.Echo, store model.EventStore) {
 	})
 
 	// curl http://localhost:8080/articles/1
-	e.GET("/events/:id", func(c echo.Context) error {
+	e.GET("/event/:id", func(c echo.Context) error {
 		// Given
 		id, _ := strconv.Atoi(c.Param("id"))
 
