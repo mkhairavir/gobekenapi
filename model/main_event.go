@@ -76,7 +76,7 @@ func (store *MainEventStore) AllDet() []Detail {
 	detail := Detail{}
 
 	for rows.Next() {
-		rows.Scan(&detail.Id, &detail.Id_event, &detail.Donatur, &detail.Dana, &detail.Metode, &detail.Tgl)
+		rows.Scan(&detail.Id, &detail.Id_event, &detail.Donatur, &detail.Dana, &detail.Metode, &detail.Tgl, &detail.Status)
 		details = append(details, detail)
 	}
 
