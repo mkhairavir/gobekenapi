@@ -20,15 +20,17 @@ type Detail struct {
 	Dana     float64
 	Metode   string
 	Tgl      string
+	Status   string
 }
 
-func CreateDetail(metode, tgl, donatur string, id_event int, dana float64) (*Detail, error) {
+func CreateDetail(metode, tgl, donatur, status string, id_event int, dana float64) (*Detail, error) {
 	return &Detail{
 		Id_event: id_event,
 		Donatur:  donatur,
 		Dana:     dana,
 		Metode:   metode,
 		Tgl:      tgl,
+		Status:   status,
 	}, nil
 }
 

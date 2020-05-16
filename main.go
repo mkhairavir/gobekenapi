@@ -80,7 +80,7 @@ func app(e *echo.Echo, store model.EventStore) {
 		eventType := c.FormValue("event_type")
 		status := c.FormValue("status")
 		idUser, _ := strconv.Atoi(c.FormValue("id_user"))
-		totalDonasi, _ := strconv.ParseFloat(c.FormValue("total_donasi"), 64)
+		totalDonasi := 0.0
 		tanggal := tanggalan.Format(layoutISO)
 		expire := tanggalan.AddDate(0, 1, 0).Format(layoutISO)
 
@@ -101,8 +101,9 @@ func app(e *echo.Echo, store model.EventStore) {
 		dana_donasi, _ := strconv.ParseFloat(c.FormValue("dana_donasi"), 64)
 		metode_donasi := c.FormValue("metode_donasi")
 		tgl_donasi := tanggalan.Format(layoutISO)
+		status := "Hutang"
 
-		detail, _ := model.CreateDetail(metode_donasi, tgl_donasi, donatur, id_event, dana_donasi)
+		detail, _ := model.CreateDetail(metode_donasi, tgl_donasi, donatur, status, id_event, dana_donasi)
 
 		store.SaveDet(detail)
 
@@ -125,6 +126,20 @@ func app(e *echo.Echo, store model.EventStore) {
 		store.Update(event)
 
 		return c.JSON(http.StatusOK, event)
+	})
+
+	e.PUT("/detail/:id", func(c echo.Context) error {
+		// e.PUT("/events/:id", func(c echo.Context) error {
+
+		id, _ := strconv.Atoi(c.Param("id"))
+
+		detail := store.FindDet(id)
+
+		detail.Status = c.FormValue("status")
+
+		store.UpdateDet(detail)
+
+		return c.JSON(http.StatusOK, detail)
 	})
 
 	// untuk delete event

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 	// "fmt"
 )
 
@@ -13,8 +12,8 @@ type MainEventStore struct {
 }
 
 func NewMainEvent() EventStore {
-	dsn := os.Getenv("DATABASE_USER") + os.Getenv("DATABASE_PASSWORD") + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
-	// dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
+	// dsn := os.Getenv("DATABASE_USER") + os.Getenv("DATABASE_PASSWORD") + "@tcp(" + os.Getenv("DATABASE_HOST") + ")/" + os.Getenv("DATABASE_NAME") + "?parseTime=true&clientFoundRows=true"
+	dsn := "root:@tcp(localhost:3306)/db_charty?parseTime=true&clientFoundRows=true"
 	// dsn := "sql3339915:QIU6tupy3K@tcp(sql3.freemysqlhosting.net)/sql3339915?parseTime=true&clientFoundRows=true"
 
 	db, err := sql.Open("mysql", dsn)
@@ -87,12 +86,13 @@ func (store *MainEventStore) AllDet() []Detail {
 func (store *MainEventStore) SaveDet(detail *Detail) error {
 
 	result, err := store.DB.Exec(`
-		INSERT INTO main_event_detail(id_event, donatur, dana_donasi, metode_donasi, tgl_donasi) VALUES(?,?,?,?,?)`,
+		INSERT INTO main_event_detail(id_event, donatur, dana_donasi, metode_donasi, tgl_donasi, status) VALUES(?,?,?,?,?,?)`,
 		detail.Id_event,
 		detail.Donatur,
 		detail.Dana,
 		detail.Metode,
 		detail.Tgl,
+		detail.Status,
 	)
 
 	if err != nil {
@@ -195,6 +195,30 @@ func (store *MainEventStore) Find(id int) *Event {
 	return &event
 }
 
+func (store *MainEventStore) FindDet(id int) *Detail {
+	detail := Detail{}
+
+	err := store.DB.
+		QueryRow(`SELECT * FROM main_event_detail WHERE id = ?`, id).
+		Scan(
+			&detail.Id,
+			&detail.Id_event,
+			&detail.Donatur,
+			&detail.Dana,
+			&detail.Metode,
+			&detail.Tgl,
+			&detail.Status,
+		)
+
+	if err != nil {
+		fmt.Println("anjay error")
+		log.Fatal(err)
+		return nil
+	}
+
+	return &detail
+}
+
 func (store *MainEventStore) FindEvent(id, id_user int) *Event {
 	event := Event{}
 
@@ -230,6 +254,25 @@ func (store *MainEventStore) Update(event *Event) error {
 		event.EventType,
 		event.Id,
 		event.Id_user,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (store *MainEventStore) UpdateDet(detail *Detail) error {
+	result, err := store.DB.Exec(`
+		UPDATE main_event_detail SET status = ? WHERE id = ?`,
+
+		detail.Status,
+		detail.Id,
 	)
 	if err != nil {
 		return err

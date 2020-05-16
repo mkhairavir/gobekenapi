@@ -12,8 +12,10 @@ type EventStore interface {
 	All() []Event
 	Save(*Event) error
 	Find(int) *Event
+	FindDet(int) *Detail
 	FindEvent(id, id_user int) *Event
 	Update(*Event) error
+	UpdateDet(*Detail) error
 	SaveDet(*Detail) error
 	EventDet(id int) []Detail
 	History() []Event
