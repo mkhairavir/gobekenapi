@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	// "fmt"
@@ -43,10 +44,30 @@ func (store *MainEventStore) All() []Event {
 	return events
 }
 
-func (store *MainEventStore) AllDet(id int) []Detail {
+func (store *MainEventStore) EventDet(id int) []Detail {
 	details := []Detail{}
 
 	rows, err := store.DB.Query(`SELECT * FROM main_event_detail WHERE id_event = ?`, id)
+
+	if err != nil {
+		return details
+	}
+
+	detail := Detail{}
+
+	for rows.Next() {
+		rows.Scan(&detail.Id, &detail.Id_event, &detail.Donatur, &detail.Dana, &detail.Metode, &detail.Tgl)
+		details = append(details, detail)
+	}
+
+	return details
+
+}
+
+func (store *MainEventStore) AllDet() []Detail {
+	details := []Detail{}
+
+	rows, err := store.DB.Query(`SELECT * FROM main_event_detail`)
 
 	if err != nil {
 		return details
@@ -151,7 +172,7 @@ func (store *MainEventStore) Find(id int) *Event {
 	event := Event{}
 
 	err := store.DB.
-		QueryRow(`SELECT * FROM main_event WHERE id=?`, id).
+		QueryRow(`SELECT * FROM main_event WHERE id = ?`, id).
 		Scan(
 			&event.Id,
 			&event.Id_user,
@@ -166,6 +187,7 @@ func (store *MainEventStore) Find(id int) *Event {
 		)
 
 	if err != nil {
+		fmt.Println("anjay error")
 		log.Fatal(err)
 		return nil
 	}
@@ -243,4 +265,20 @@ func (store *MainEventStore) History() []Event {
 
 	}
 	return histories
+}
+
+func (store *MainEventStore) DeleteEvent(event *Event) error {
+	result, err := store.DB.Exec(`
+		DELETE FROM main_event WHERE id = ?`,
+		event.Id,
+	)
+	if err != nil {
+		return err
+	}
+
+	_, err = result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	return nil
 }

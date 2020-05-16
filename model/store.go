@@ -15,10 +15,10 @@ type EventStore interface {
 	FindEvent(id, id_user int) *Event
 	Update(*Event) error
 	SaveDet(*Detail) error
-	AllDet(id int) []Detail
+	EventDet(id int) []Detail
 	History() []Event
 	UserEvent(id int) []Event
 	// SingleEvent(id int) *Event
-	// ShowDet() []Detail
-	// Delete(article *Event) error
+	AllDet() []Detail
+	DeleteEvent(event *Event) error
 }

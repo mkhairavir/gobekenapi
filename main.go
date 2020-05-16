@@ -25,23 +25,31 @@ func app(e *echo.Echo, store model.EventStore) {
 		return c.JSON(http.StatusOK, events)
 	})
 
-	// curl http://localhost:8080/articles/1
-	e.GET("/event/:id", func(c echo.Context) error {
+	// untuk tampil spesifik event
+	e.GET("/events/:id", func(c echo.Context) error {
 		// Given
 		id, _ := strconv.Atoi(c.Param("id"))
 
 		// Process
-		article := store.Find(id)
+		event := store.Find(id)
 
 		// Response
-		return c.JSON(http.StatusOK, article)
+		return c.JSON(http.StatusOK, event)
 	})
 
 	// untuk tampil event detail
 	e.GET("/event/:id", func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		details := store.AllDet(id)
+		details := store.EventDet(id)
+		return c.JSON(http.StatusOK, details)
+	})
+
+	//untuk tampil semua detail
+	e.GET("/detail", func(c echo.Context) error {
+		// id, _ := strconv.Atoi(c.Param("id"))
+
+		details := store.AllDet()
 		return c.JSON(http.StatusOK, details)
 	})
 
@@ -115,6 +123,18 @@ func app(e *echo.Echo, store model.EventStore) {
 		event.EventType = c.FormValue("event_type")
 
 		store.Update(event)
+
+		return c.JSON(http.StatusOK, event)
+	})
+
+	// untuk delete event
+	e.DELETE("/event/:id", func(c echo.Context) error {
+
+		id, _ := strconv.Atoi(c.Param("id"))
+
+		event := store.Find(id)
+
+		store.DeleteEvent(event)
 
 		return c.JSON(http.StatusOK, event)
 	})
