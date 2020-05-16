@@ -183,6 +183,7 @@ func (store *MainEventStore) Find(id int) *Event {
 			&event.EventType,
 			&event.TanggalAwal,
 			&event.Expire,
+			&event.TargetDonasi,
 			&event.TotalDonasi,
 			&event.Status,
 		)
