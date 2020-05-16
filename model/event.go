@@ -8,6 +8,7 @@ type Event struct {
 	DeskripsiEvent string
 	EventType      string
 	TotalDonasi    float64
+	TargetDonasi   float64
 	TanggalAwal    string
 	Expire         string
 	Status         string
@@ -34,7 +35,7 @@ func CreateDetail(metode, tgl, donatur, status string, id_event int, dana float6
 	}, nil
 }
 
-func CreateEvent(img, judul, deksripsi, eventType, tanggal, expire, status string, id_user int, totalDonasi float64) (*Event, error) {
+func CreateEvent(img, judul, deksripsi, eventType, tanggal, expire, status string, id_user int, targetDonasi, totalDonasi float64) (*Event, error) {
 	return &Event{
 		// id:          id,
 		Id_user:        id_user,
@@ -46,5 +47,6 @@ func CreateEvent(img, judul, deksripsi, eventType, tanggal, expire, status strin
 		TanggalAwal:    tanggal,
 		Expire:         expire,
 		TotalDonasi:    totalDonasi,
+		TargetDonasi:   targetDonasi,
 	}, nil
 }

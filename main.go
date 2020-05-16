@@ -80,11 +80,12 @@ func app(e *echo.Echo, store model.EventStore) {
 		eventType := c.FormValue("event_type")
 		status := c.FormValue("status")
 		idUser, _ := strconv.Atoi(c.FormValue("id_user"))
-		totalDonasi := 0.0
+		targetDonasi, _ := strconv.ParseFloat(c.FormValue("target_donasi"), 64)
+		totalDonasi := float64(0)
 		tanggal := tanggalan.Format(layoutISO)
 		expire := tanggalan.AddDate(0, 1, 0).Format(layoutISO)
 
-		event, _ := model.CreateEvent(img, name, deskripsi, eventType, tanggal, expire, status, idUser, totalDonasi)
+		event, _ := model.CreateEvent(img, name, deskripsi, eventType, tanggal, expire, status, idUser, targetDonasi, totalDonasi)
 
 		store.Save(event)
 

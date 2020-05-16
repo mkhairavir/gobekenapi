@@ -37,7 +37,7 @@ func (store *MainEventStore) All() []Event {
 	event := Event{}
 	// event.name = "hallo"
 	for rows.Next() {
-		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.JudulEvent, &event.DeskripsiEvent, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TotalDonasi, &event.Status)
+		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.JudulEvent, &event.DeskripsiEvent, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TargetDonasi, &event.TotalDonasi, &event.Status)
 		events = append(events, event)
 	}
 
@@ -138,13 +138,13 @@ func (store *MainEventStore) Save(event *Event) error {
 	// tanggal := strconv.Itoa(tahun) + "-" + bulan.String() + "-" + strconv.Itoa(hari)
 
 	result, err := store.DB.Exec(`
-		INSERT INTO main_event(img, judul_event, deskripsi_event, event_type, id_user, total_donasi,tgl, expire, status) VALUES(?,?,?,?,?,?,?,?,?)`,
+		INSERT INTO main_event(img, judul_event, deskripsi_event, event_type, id_user, target_donasi,tgl, expire, status) VALUES(?,?,?,?,?,?,?,?,?)`,
 		event.Img,
 		event.JudulEvent,
 		event.DeskripsiEvent,
 		event.EventType,
 		event.Id_user,
-		event.TotalDonasi,
+		event.TargetDonasi,
 		event.TanggalAwal,
 		event.Expire,
 		event.Status,
