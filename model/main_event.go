@@ -44,10 +44,10 @@ func (store *MainEventStore) All() []Event {
 	return events
 }
 
-func (store *MainEventStore) EventDet(id int) []Detail {
+func (store *MainEventStore) EventDet(id int, status string) []Detail {
 	details := []Detail{}
 
-	rows, err := store.DB.Query(`SELECT * FROM main_event_detail WHERE id_event = ?`, id)
+	rows, err := store.DB.Query(`SELECT * FROM main_event_detail WHERE id_event = ? and status = ?`, id, status)
 
 	if err != nil {
 		return details
