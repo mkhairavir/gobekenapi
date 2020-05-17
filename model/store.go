@@ -17,7 +17,7 @@ type EventStore interface {
 	Update(*Event) error
 	UpdateDet(*Detail) error
 	SaveDet(*Detail) error
-	EventDet(id int) []Detail
+	EventDet(id int, status string) []Detail
 	History() []Event
 	UserEvent(id int) []Event
 	// SingleEvent(id int) *Event

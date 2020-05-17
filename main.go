@@ -51,8 +51,8 @@ func app(e *echo.Echo, store model.EventStore) {
 	// untuk tampil event detail
 	e.GET("/event/:id", func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-
-		details := store.EventDet(id)
+		status := "Hutang"
+		details := store.EventDet(id, status)
 		return c.JSON(http.StatusOK, details)
 	})
 
