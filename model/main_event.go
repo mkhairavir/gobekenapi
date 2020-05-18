@@ -105,6 +105,17 @@ func (store *MainEventStore) SaveDet(detail *Detail) error {
 		return err
 	}
 
+	result2, err2 := store.DB.Exec(`UPDATE main_event SET total_donasi = total_donasi + ? WHERE id = ? `, detail.Dana, detail.Id_event)
+
+	if err2 != nil {
+		return err2
+	}
+
+	_, err2 = result2.RowsAffected()
+	if err2 != nil {
+		return err2
+	}
+
 	lastID, err := result.LastInsertId()
 	if err != nil {
 		return err
