@@ -137,7 +137,7 @@ func (store *MainEventStore) UserEvent(id int) []Event {
 
 	event := Event{}
 	for rows.Next() {
-		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.JudulEvent, &event.DeskripsiEvent, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TotalDonasi, &event.Status)
+		rows.Scan(&event.Id, &event.Id_user, &event.Img, &event.JudulEvent, &event.DeskripsiEvent, &event.EventType, &event.TanggalAwal, &event.Expire, &event.TargetDonasi, &event.TotalDonasi, &event.Status)
 		events = append(events, event)
 	}
 
@@ -246,6 +246,7 @@ func (store *MainEventStore) FindEvent(id, id_user int) *Event {
 			&event.EventType,
 			&event.TanggalAwal,
 			&event.Expire,
+			&event.TargetDonasi,
 			&event.TotalDonasi,
 			&event.Status,
 		)
