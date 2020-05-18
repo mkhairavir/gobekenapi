@@ -310,7 +310,7 @@ func (store *MainEventStore) History() []Event {
 
 	history := Event{}
 	for rows.Next() {
-		rows.Scan(&history.Id, &history.Id_user, &history.Img, &history.JudulEvent, &history.DeskripsiEvent, &history.EventType, &history.TanggalAwal, &history.Expire, &history.TotalDonasi, &history.Status)
+		rows.Scan(&history.Id, &history.Id_user, &history.Img, &history.JudulEvent, &history.DeskripsiEvent, &history.EventType, &history.TanggalAwal, &history.Expire, &history.TargetDonasi, &history.TotalDonasi, &history.Status)
 		// layoutISO := "2006-01-02"
 		// fmt.Println(history.TanggalAwal)
 		// t, _ := time.Parse(layoutISO, history.TanggalAwal)
