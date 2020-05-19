@@ -201,7 +201,6 @@ func (store *MainEventStore) Find(id int) *Event {
 
 	if err != nil {
 		fmt.Println("anjay error")
-		log.Fatal(err)
 		return nil
 	}
 
