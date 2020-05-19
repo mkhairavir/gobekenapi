@@ -3,7 +3,8 @@ package model
 import (
 	"database/sql"
 	"fmt"
-	"log"
+
+	// "log"
 	"os"
 	// "fmt"
 )
@@ -224,7 +225,6 @@ func (store *MainEventStore) FindDet(id int) *Detail {
 
 	if err != nil {
 		fmt.Println("anjay error")
-		log.Fatal(err)
 		return nil
 	}
 
@@ -251,7 +251,6 @@ func (store *MainEventStore) FindEvent(id, id_user int) *Event {
 		)
 
 	if err != nil {
-		log.Fatal(err)
 		return nil
 	}
 
