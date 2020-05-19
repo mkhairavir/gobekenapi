@@ -28,7 +28,7 @@ func NewMainEvent() EventStore {
 
 func (store *MainEventStore) All() []Event {
 	events := []Event{}
-	rows, err := store.DB.Query(`SELECT * FROM main_event`)
+	rows, err := store.DB.Query(`SELECT * FROM main_event where expire >= CURRENT_DATE()`)
 
 	if err != nil {
 
